@@ -13,45 +13,43 @@ public class TableManagement {
             // create a database connection
             connection = DriverManager.getConnection("jdbc:sqlite:/home/codex-coder/Desktop/FakeData/pokemon.db");
             Statement statement = connection.createStatement();
-
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
-
             statement.executeUpdate("drop table if exists pokemon");
-            statement.executeUpdate("create table pokemon (id integer, name string,type string)");
-            statement.executeUpdate("insert into pokemon values(2,'john','read')");
-            String sqlInsert = "insert into Pokemon(id,name,type) VALUES (?,?,?)";
-//            ResultSet rs = statement.executeQuery("select * from pokemon");
-            for (int i = 0; i < 200000; i++) {
-//                int id=faker.random().nextInt(120000)
+            statement.executeUpdate("create table if not exists pokemon (id integer, name string,location string)");
+            String sqlInsert = "insert into pokemon(id,name,location) VALUES (?,?,?)";
+//            statement.executeUpdate("CREATE INDEX if not exists location_index ON pokemon (location)");
+//            statement.executeUpdate("CREATE INDEX if not exists id_index ON pokemon (id)");
+//            statement.executeUpdate("CREATE INDEX if not exists name_index ON pokemon (name)");
+            statement.executeUpdate("Drop INDEX if exists pokemon.location_index");
+            statement.executeUpdate("Drop INDEX if exists pokemon.id_index");
+            statement.executeUpdate("Drop INDEX if exists pokemon.name_index");
+//5 seconds without any index
+            //7 seconds with an index
+            //11 seconds with 2 indexes
+//10/11 seconds with three indexes
+            PreparedStatement st = connection.prepareStatement(sqlInsert);
+            for (int i = 0; i < 30; i++) {
                 String id = faker.idNumber().valid();
                 String name = faker.pokemon().name();
-                String type = faker.name().lastName();
+                String location = faker.pokemon().location();
 //
-                System.out.println(type);
-                System.out.println(name);
-                System.out.println(id);
-                PreparedStatement st = connection.prepareStatement(sqlInsert);
+//                System.out.println(location);
+//                System.out.println(name);
+//                System.out.println(id);
                 st.setString(1, id);
                 st.setString(2, name);
-                st.setString(3, type);
+                st.setString(3, location);
+
                 st.executeUpdate();
-//                System.out.println("Success " + statement.executeQuery("select name from pokemon"));
-//                st.setString(3, type);
             }
+            System.out.println("complete");
         } catch (SQLException e) {
             // if the error message is "out of memory",
             // it probably means no database file is found
             System.err.println(e.getMessage());
-        } finally {
-            try {
-                if (connection != null)
-                    connection.close();
-            } catch (SQLException e) {
-                // connection close failed.
-                System.err.println(e.getMessage());
-            }
         }
-
     }
+
 }
+
 
