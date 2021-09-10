@@ -1,4 +1,5 @@
 import com.github.javafaker.Faker;
+import com.github.javafaker.IdNumber;
 
 import java.sql.*;
 
@@ -10,30 +11,32 @@ public class TableManagement {
         try {
             Faker faker = new Faker();
             // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:pokemon.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:/home/codex-coder/Desktop/FakeData/pokemon.db");
             Statement statement = connection.createStatement();
-            String sqlInsert = "insert into Pokemon VALUES (?,?,?)";
+
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
             statement.executeUpdate("drop table if exists pokemon");
             statement.executeUpdate("create table pokemon (id integer, name string,type string)");
-//            statement.executeUpdate("insert into person values(1, 'leo')");
-
-            ResultSet rs = statement.executeQuery("select * from pokemon");
-            while (rs.next()) {
-                // read the result set
-                System.out.println("name = " + rs.getString("name"));
-                System.out.println("id = " + rs.getString("type"));
-            }
-            for (int i = 0; i < 120000; i++) {
+            statement.executeUpdate("insert into pokemon values(2,'john','read')");
+            String sqlInsert = "insert into Pokemon(id,name,type) VALUES (?,?,?)";
+//            ResultSet rs = statement.executeQuery("select * from pokemon");
+            for (int i = 0; i < 200000; i++) {
 //                int id=faker.random().nextInt(120000)
-                int id = faker.random().nextInt(111222);
+                String id = faker.idNumber().valid();
                 String name = faker.pokemon().name();
                 String type = faker.name().lastName();
+//
+                System.out.println(type);
+                System.out.println(name);
+                System.out.println(id);
                 PreparedStatement st = connection.prepareStatement(sqlInsert);
-                st.setInt(1,id );
+                st.setString(1, id);
                 st.setString(2, name);
                 st.setString(3, type);
+                st.executeUpdate();
+//                System.out.println("Success " + statement.executeQuery("select name from pokemon"));
+//                st.setString(3, type);
             }
         } catch (SQLException e) {
             // if the error message is "out of memory",
