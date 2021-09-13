@@ -11,11 +11,11 @@ public class TableManagement {
         try {
             Faker faker = new Faker();
             // create a database connection
-            connection = DriverManager.getConnection("jdbc:sqlite:/home/codex-coder/Desktop/FakeData/pokemon.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:pokemon.db");
             Statement statement = connection.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
             statement.executeUpdate("drop table if exists pokemon");
-            statement.executeUpdate("create table if not exists pokemon (id integer, name string,location string)");
+            statement.executeUpdate("create table if not exists pokemon (id integer not null primary key, name string,location string)");
             String sqlInsert = "insert into pokemon(id,name,location) VALUES (?,?,?)";
 //            statement.executeUpdate("CREATE INDEX if not exists location_index ON pokemon (location)");
 //            statement.executeUpdate("CREATE INDEX if not exists id_index ON pokemon (id)");
@@ -36,7 +36,7 @@ public class TableManagement {
 //                System.out.println(location);
 //                System.out.println(name);
 //                System.out.println(id);
-                st.setString(1, id);
+//                st.setString(1, id);
                 st.setString(2, name);
                 st.setString(3, location);
 
